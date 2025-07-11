@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  mock-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: mock-api:latest
+    container_name: mock-api-service
+    ports:
+      - "4001:4001"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - LOG_LEVEL=info
+    volumes:
+      - mock-data:/app/data
+    restart: unless-stopped
+    networks:
+      - mock-network
+    labels:
+      - "com.example.description=Mock API Service"
+      - "com.example.version=1.0.0"
+
+volumes:
+  mock-data:
+    driver: local
+
+networks:
+  mock-network:
+    driver: bridge
