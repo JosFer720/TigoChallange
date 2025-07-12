@@ -11,20 +11,17 @@ services:
       - "4001:4001"
     environment:
       - NODE_ENV=production
-      - PORT=3000
+      - PORT=4001
       - LOG_LEVEL=info
-    volumes:
-      - mock-data:/app/data
     restart: unless-stopped
     networks:
       - mock-network
-    labels:
-      - "com.example.description=Mock API Service"
-      - "com.example.version=1.0.0"
-
-volumes:
-  mock-data:
-    driver: local
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
 networks:
   mock-network:

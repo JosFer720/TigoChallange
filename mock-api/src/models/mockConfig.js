@@ -1,8 +1,7 @@
-const { v4: uuidv4 } = require('uuid');
-
 class MockConfig {
   constructor(data) {
-    this.id = data.id || uuidv4();
+    // Usar el ID proporcionado o generar uno simple basado en timestamp
+    this.id = data.id || `MOCK-${Date.now()}`;
     this.name = data.name;
     this.description = data.description || '';
     this.path = data.path;

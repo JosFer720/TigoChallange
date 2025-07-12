@@ -1,41 +1,33 @@
-# Build stage
-FROM node:18-alpine AS builder
-
-WORKDIR /app
-
-# Copy package files
-COPY package*.json ./
-
-# Install all dependencies (including dev dependencies for building)
-RUN npm ci
-
-# Production stage
 FROM node:18-alpine
 
 WORKDIR /app
 
-# Create non-root user
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S nodejs -u 1001
+# Instalar dependencias del sistema si es necesario
+RUN apk add --no-cache curl
 
-# Copy package files
+# Copiar archivos de package
 COPY package*.json ./
 
-# Install only production dependencies
-RUN npm ci --omit=dev && npm cache clean --force
+# Instalar todas las dependencias
+RUN npm install --production
 
-# Copy application code
-COPY --chown=nodejs:nodejs . .
+# Copiar el resto de la aplicación
+COPY . .
 
-# Switch to non-root user
+# Crear usuario no-root
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nodejs -u 1001 && \
+    chown -R nodejs:nodejs /app
+
+# Cambiar a usuario no-root
 USER nodejs
 
-# Expose port
+# Exponer puerto
 EXPOSE 4001
 
-# Health check
+# Health check con el puerto correcto
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:3000/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1); })"
+  CMD curl -f http://localhost:4001/health || exit 1
 
-# Start application
+# Iniciar aplicación
 CMD ["node", "server.js"]

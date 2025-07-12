@@ -1,5 +1,6 @@
 const MockConfig = require('../models/mockConfig');
 const logger = require('../utils/logger');
+const mocksTaller = require('../data/mocks-taller'); // Importar los mocks
 
 class MockService {
   constructor() {
@@ -8,22 +9,28 @@ class MockService {
   }
 
   initializeDefaultMocks() {
-    // Mock de ejemplo
-    const exampleMock = new MockConfig({
-      name: 'Example User API',
-      description: 'Returns user information',
-      path: '/api/users/:id',
-      method: 'GET',
-      response: {
-        status: 200,
-        body: {
-          id: '{{params.id}}',
-          name: 'John Doe',
-          email: 'john@example.com'
-        }
+    logger.info('Cargando mocks del taller de autos...');
+    
+    // Cargar todos los mocks del taller automáticamente
+    let cargados = 0;
+    let fallidos = 0;
+    
+    mocksTaller.forEach(mock => {
+      try {
+        const config = new MockConfig(mock);
+        this.configs.set(config.id, config);
+        cargados++;
+      } catch (error) {
+        logger.error(`Error cargando mock ${mock.name}: ${error.message}`);
+        fallidos++;
       }
     });
-    this.configs.set(exampleMock.id, exampleMock);
+    
+    logger.info(`Mocks cargados: ${cargados}`);
+    if (fallidos > 0) {
+      logger.warn(`Mocks fallidos: ${fallidos}`);
+    }
+    logger.info(`Total de mocks activos: ${this.configs.size}`);
   }
 
   // Crear configuración
@@ -229,4 +236,5 @@ class MockService {
   }
 }
 
+module.exports = new MockService();
 module.exports = new MockService();
