@@ -7,7 +7,7 @@ API REST para crear y gestionar mocks de endpoints dinámicamente. Incluye 15+ e
 ### Opción 1: Desarrollo Local
 ```bash
 # Clonar repositorio
-git clone <repository-url>
+git clone https://github.com/JosFer720/TigoChallange
 cd mock-api
 
 # Instalar dependencias
@@ -34,8 +34,6 @@ docker-compose up -d
 
 ### 🌐 Acceder a Swagger
 Abre tu navegador en: **http://localhost:4001/api-docs**
-
-![Swagger UI](https://img.shields.io/badge/Swagger-UI-green)
 
 ### 🎯 Cómo usar Swagger UI
 
